@@ -1,21 +1,22 @@
 {
-  "publisher": "antfu",
-  "name": "theme-vitesse",
-  "displayName": "Vitesse Theme",
-  "version": "1.0.1",
+  "publisher": "froQ",
+  "name": "theme-oq",
+  "displayName": "oQ Theme",
+  "type": "module",
+  "version": "0.0.2",
   "packageManager": "pnpm@10.15.0",
-  "description": "Vitesse theme for VS Code",
+  "description": "oQ theme for VS Code",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/antfu/vscode-theme-vitesse"
+    "url": "https://github.com/Fro-Q/vscode-theme-oq"
   },
   "bugs": {
-    "url": "https://github.com/antfu/vscode-theme-vitesse/issues"
+    "url": "https://github.com/Fro-Q/vscode-theme-oq/issues"
   },
   "keywords": [
     "theme",
-    "vitesse",
+    "oq",
     "light",
     "dark"
   ],
@@ -25,11 +26,8 @@
   "exports": {
     "./*": "./*"
   },
-  "icon": "icon.png",
   "files": [
     "LICENSE.md",
-    "extra/*",
-    "icon.png",
     "themes/*"
   ],
   "engines": {
@@ -38,29 +36,24 @@
   "contributes": {
     "themes": [
       {
-        "label": "Vitesse Light",
+        "label": "oQ Light",
         "uiTheme": "vs",
-        "path": "./themes/vitesse-light.json"
+        "path": "./themes/oq-light.json"
       },
       {
-        "label": "Vitesse Dark",
+        "label": "oQ Dark",
         "uiTheme": "vs-dark",
-        "path": "./themes/vitesse-dark.json"
+        "path": "./themes/oq-dark.json"
       },
       {
-        "label": "Vitesse Black",
-        "uiTheme": "vs-dark",
-        "path": "./themes/vitesse-black.json"
-      },
-      {
-        "label": "Vitesse Light Soft",
+        "label": "oQ Light Soft",
         "uiTheme": "vs",
-        "path": "./themes/vitesse-light-soft.json"
+        "path": "./themes/oq-light-soft.json"
       },
       {
-        "label": "Vitesse Dark Soft",
+        "label": "oQ Dark Soft",
         "uiTheme": "vs-dark",
-        "path": "./themes/vitesse-dark-soft.json"
+        "path": "./themes/oq-dark-soft.json"
       }
     ]
   },
@@ -73,23 +66,26 @@
     "release": "bumpp --all",
     "package": "vsce package --no-dependencies"
   },
+  "dependencies": {
+    "eslint-plugin-format": "^1.0.2"
+  },
   "devDependencies": {
-    "@antfu/eslint-config": "^5.2.1",
-    "@antfu/utils": "^9.2.0",
+    "@antfu/eslint-config": "^5.4.1",
+    "@antfu/utils": "^9.3.0",
     "@types/color": "^4.2.0",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^24.3.0",
-    "@vscode/vsce": "^3.6.0",
+    "@types/node": "^24.9.1",
+    "@vscode/vsce": "^3.6.2",
     "@xterm/xterm": "^5.5.0",
-    "bumpp": "^10.2.3",
-    "color": "^5.0.0",
-    "eslint": "^9.33.0",
-    "fs-extra": "^11.3.1",
-    "ovsx": "^0.10.5",
+    "bumpp": "^10.3.1",
+    "color": "^5.0.2",
+    "eslint": "^9.38.0",
+    "fs-extra": "^11.3.2",
+    "ovsx": "^0.10.6",
     "tsup": "^8.5.0",
-    "tsx": "^4.20.4",
-    "typescript": "^5.9.2",
-    "vsxpub": "^0.1.0"
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vsxpub": "^0.1.2"
   },
   "preview": true
 }

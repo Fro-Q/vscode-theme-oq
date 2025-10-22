@@ -1,5 +1,4 @@
 import fs from 'fs-extra'
-import { getXtermTheme } from './extra'
 import getTheme from './theme'
 
 console.log('starting')
@@ -7,74 +6,36 @@ console.log('starting')
 fs.mkdir('./themes', { recursive: true })
   .then(() => Promise.all([
     fs.writeJSON(
-      './themes/vitesse-light.json',
+      './themes/oq-light.json',
       getTheme({
         color: 'light',
-        name: 'Vitesse Light',
+        name: 'oQ Light',
       }),
       { spaces: 2 },
     ),
     fs.writeJSON(
-      './themes/vitesse-dark.json',
+      './themes/oq-dark.json',
       getTheme({
         color: 'dark',
-        name: 'Vitesse Dark',
+        name: 'oQ Dark',
       }),
       { spaces: 2 },
     ),
     fs.writeJSON(
-      './themes/vitesse-black.json',
+      './themes/oq-dark-soft.json',
       getTheme({
         color: 'dark',
-        name: 'Vitesse Black',
-        black: true,
-      }),
-      { spaces: 2 },
-    ),
-    fs.writeJSON(
-      './themes/vitesse-light-soft.json',
-      getTheme({
-        color: 'light',
-        name: 'Vitesse Light Soft',
+        name: 'oQ Dark Soft',
         soft: true,
       }),
       { spaces: 2 },
     ),
     fs.writeJSON(
-      './themes/vitesse-dark-soft.json',
+      './themes/oq-light-soft.json',
       getTheme({
-        color: 'dark',
-        name: 'Vitesse Dark Soft',
-        soft: true,
-      }),
-      { spaces: 2 },
-    ),
-  ]))
-
-fs.mkdir('./extra', { recursive: true })
-  .then(() => Promise.all([
-    fs.writeJSON(
-      './extra/xterm-vitesse-light.json',
-      getXtermTheme({
         color: 'light',
-        name: 'Vitesse Light',
-      }),
-      { spaces: 2 },
-    ),
-    fs.writeJSON(
-      './extra/xterm-vitesse-dark.json',
-      getXtermTheme({
-        color: 'dark',
-        name: 'Vitesse Dark',
-      }),
-      { spaces: 2 },
-    ),
-    fs.writeJSON(
-      './extra/xterm-vitesse-black.json',
-      getXtermTheme({
-        color: 'dark',
-        name: 'Vitesse Black',
-        black: true,
+        name: 'oQ Light Soft',
+        soft: true,
       }),
       { spaces: 2 },
     ),

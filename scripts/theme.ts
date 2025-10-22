@@ -1,4 +1,7 @@
 import type { GetThemeOptions } from './helper'
+import { read } from 'node:fs'
+import { stringify } from 'node:querystring'
+import { deprecate } from 'node:util'
 import { toArray } from '@antfu/utils'
 import { VitesseThemes } from './colors'
 import { createThemeHelpers } from './helper'
@@ -10,256 +13,271 @@ export default function getTheme(options: GetThemeOptions) {
     colors,
   } = createThemeHelpers(options)
 
-  const foreground = v('foreground')
-  const secondaryForeground = v('secondaryForeground')
-  const activeForeground = v('activeForeground')
-  const primary = v('primary')
-
-  const border = v('border')
-  const background = v('background')
-  const activeBackground = v('activeBackground')
-
-  const punctuation = v('punctuation')
-
-  const selectionBackground = v('selectionBackground')
-  const selectionBackgroundActive = v('selectionBackgroundActive')
-  const selectionBackgroundInActive = v('selectionBackgroundInActive')
-
   const theme = {
     name: options.name,
     base: pick({ light: 'vs', dark: 'vs-dark' }),
     colors: {
-      'focusBorder': '#00000000',
-      foreground,
-      'descriptionForeground': secondaryForeground,
-      'errorForeground': v('red'),
+      'focusBorder': v('border'),
+      'foreground': v('fg'),
+      'descriptionForeground': v('fgMuted'),
+      'errorForeground': v('diagError'),
 
-      'textLink.foreground': primary,
-      'textLink.activeForeground': primary,
-      'textBlockQuote.background': background,
-      'textBlockQuote.border': border,
-      'textCodeBlock.background': background,
-      'textPreformat.foreground': colors.gray[6],
-      'textSeparator.foreground': colors.gray[3],
+      'textLink.foreground': v('accent1'),
+      'textLink.activeForeground': v('accent1'),
+      'textBlockQuote.background': v('bg'),
+      'textBlockQuote.border': v('borderMuted'),
+      'textCodeBlock.background': v('bg'),
+      'textPreformat.foreground': v('fgMuted'),
+      'textSeparator.foreground': v('fgMuted'),
 
-      'button.background': primary,
-      'button.foreground': background,
-      'button.hoverBackground': primary,
+      'button.background': v('bgReversed'),
+      'button.foreground': v('fgReversed'),
+      'button.hoverBackground': v('bgReversed'),
 
-      'checkbox.background': activeBackground,
-      'checkbox.border': pick({ light: colors.gray[3], dark: colors.gray[1] }),
+      'checkbox.background': v('bg'),
+      // 'checkbox.border': pick({ light: colors.gray[3], dark: colors.gray[1] }),
+      'checkbox.border': v('borderMuted'),
 
-      'dropdown.background': background,
-      'dropdown.border': border,
-      'dropdown.foreground': foreground,
-      'dropdown.listBackground': activeBackground,
+      'dropdown.background': v('bg'),
+      'dropdown.border': v('borderMuted'),
+      'dropdown.foreground': v('fg'),
+      'dropdown.listBackground': v('bg'),
 
-      'input.background': activeBackground,
-      'input.border': border,
-      'input.foreground': foreground,
-      'input.placeholderForeground': secondaryForeground,
-      'inputOption.activeBackground': v('ignored'),
+      'input.background': v('bg'),
+      'input.border': v('borderMuted'),
+      'input.foreground': v('fg'),
+      'input.placeholderForeground': v('fgMuted'),
+      'inputOption.activeBackground': v('bgAlt'),
 
-      'badge.foreground': background,
-      'badge.background': secondaryForeground,
+      'badge.foreground': v('fgReversed'),
+      'badge.background': v('bgReversed'),
 
-      'progressBar.background': primary,
+      'progressBar.background': v('accent1'),
 
-      'titleBar.activeForeground': activeForeground,
-      'titleBar.activeBackground': background,
-      'titleBar.inactiveForeground': colors.gray[5],
-      'titleBar.inactiveBackground': background,
-      'titleBar.border': activeBackground,
+      'titleBar.activeForeground': v('fgStrong'),
+      'titleBar.activeBackground': v('bg'),
+      'titleBar.inactiveForeground': v('fgMuted'),
+      'titleBar.inactiveBackground': v('bg'),
+      'titleBar.border': v('borderMuted'),
 
-      'activityBar.foreground': foreground,
-      'activityBar.inactiveForeground': v('ignored'),
-      'activityBar.background': background,
-      'activityBarBadge.foreground': background,
-      'activityBarBadge.background': activeForeground,
-      'activityBar.activeBorder': primary,
-      'activityBar.border': border,
+      'activityBar.foreground': v('fg'),
+      'activityBar.inactiveForeground': v('fgMuted'),
+      'activityBar.background': v('bg'),
+      'activityBarBadge.foreground': v('fgReversed'),
+      'activityBarBadge.background': v('bgReversed'),
+      'activityBar.activeBorder': v('accent1'),
+      'activityBar.border': v('borderMuted'),
 
-      'sideBar.foreground': activeForeground,
-      'sideBar.background': background,
-      'sideBar.border': border,
-      'sideBarTitle.foreground': foreground,
-      'sideBarSectionHeader.foreground': foreground,
-      'sideBarSectionHeader.background': background,
-      'sideBarSectionHeader.border': border,
+      'sideBar.foreground': v('fg'),
+      'sideBar.background': v('bgFloat'),
+      'sideBar.border': v('borderMuted'),
+      'sideBarTitle.foreground': v('fgStrong'),
+      'sideBarSectionHeader.foreground': v('fgStrong'),
+      'sideBarSectionHeader.background': v('bgAlt'),
+      'sideBarSectionHeader.border': v('borderMuted'),
 
-      'list.hoverForeground': foreground,
-      'list.inactiveSelectionForeground': foreground,
-      'list.activeSelectionForeground': foreground,
-      'list.hoverBackground': activeBackground,
-      'list.inactiveSelectionBackground': activeBackground,
-      'list.activeSelectionBackground': activeBackground,
-      'list.inactiveFocusBackground': background,
-      'list.focusBackground': activeBackground,
-      'list.highlightForeground': primary,
+      'list.hoverForeground': v('fg'),
+      'list.inactiveSelectionForeground': v('fgMuted'),
+      'list.activeSelectionForeground': v('fgStrong'),
+      'list.hoverBackground': v('bgSelection'),
+      'list.inactiveSelectionBackground': v('bg'),
+      'list.activeSelectionBackground': v('bgAlt'),
+      'list.inactiveFocusBackground': v('bg'),
+      'list.focusBackground': v('bgAlt'),
+      'list.highlightForeground': v('fg'),
 
-      'tree.indentGuidesStroke': pick({ light: colors.gray[2], dark: colors.gray[1] }),
+      'tree.indentGuidesStroke': v('divider'),
 
-      'notificationCenterHeader.foreground': colors.gray[5],
-      'notificationCenterHeader.background': background,
-      'notifications.foreground': foreground,
-      'notifications.background': background,
-      'notifications.border': border,
-      'notificationsErrorIcon.foreground': v('red'),
-      'notificationsWarningIcon.foreground': v('orange'),
-      'notificationsInfoIcon.foreground': v('blue'),
+      'notificationCenterHeader.foreground': v('fgStrong'),
+      'notificationCenterHeader.background': v('bg'),
+      'notifications.foreground': v('fg'),
+      'notifications.background': v('bg'),
+      'notifications.border': v('borderMuted'),
+      'notificationsErrorIcon.foreground': v('diagError'),
+      'notificationsWarningIcon.foreground': v('diagWarn'),
+      'notificationsInfoIcon.foreground': v('diagInfo'),
 
-      'pickerGroup.border': border,
-      'pickerGroup.foreground': foreground,
-      'quickInput.background': background,
-      'quickInput.foreground': foreground,
-      'quickInputList.focusBackground': activeBackground,
+      'pickerGroup.border': v('borderMuted'),
+      'pickerGroup.foreground': v('fg'),
+      'quickInput.background': v('bg'),
+      'quickInput.foreground': v('fg'),
+      'quickInputList.focusBackground': v('bg'),
 
-      'statusBar.foreground': activeForeground,
-      'statusBar.background': background,
-      'statusBar.border': border,
-      'statusBar.noFolderBackground': background,
-      'statusBar.debuggingBackground': activeBackground,
-      'statusBar.debuggingForeground': activeForeground,
-      'statusBarItem.prominentBackground': activeBackground,
+      'statusBar.foreground': v('fg'),
+      'statusBar.background': v('bgStatusLine'),
+      'statusBar.border': v('bg'),
+      'statusBar.noFolderBackground': v('bg'),
+      'statusBar.debuggingBackground': v('bg'),
+      'statusBar.debuggingForeground': v('fg'),
+      'statusBarItem.prominentBackground': v('bgAlt'),
 
-      'editorGroupHeader.tabsBackground': background,
-      'editorGroupHeader.tabsBorder': border,
-      'editorGroup.border': border,
+      'editorGroupHeader.tabsBackground': v('bg'),
+      'editorGroupHeader.tabsBorder': v('borderMuted'),
+      'editorGroup.border': v('borderMuted'),
 
-      'tab.activeForeground': foreground,
-      'tab.inactiveForeground': colors.gray[5],
-      'tab.inactiveBackground': background,
-      'tab.activeBackground': background,
-      'tab.hoverBackground': activeBackground,
-      'tab.unfocusedHoverBackground': background,
-      'tab.border': border,
-      'tab.unfocusedActiveBorderTop': border,
-      'tab.activeBorder': border,
-      'tab.unfocusedActiveBorder': border,
-      'tab.activeBorderTop': secondaryForeground,
+      'tab.activeForeground': v('fgStrong'),
+      'tab.inactiveForeground': v('fgMuted'),
+      'tab.inactiveBackground': v('bg'),
+      'tab.activeBackground': v('bg'),
+      'tab.hoverBackground': v('bgAlt'),
+      'tab.unfocusedHoverBackground': v('bg'),
+      'tab.border': v('borderMuted'),
+      'tab.unfocusedActiveBorderTop': v('borderMuted'),
+      'tab.activeBorder': v('borderMuted'),
+      'tab.unfocusedActiveBorder': v('borderMuted'),
+      'tab.activeBorderTop': v('fgStrong'),
 
-      'breadcrumb.foreground': colors.gray[5],
-      'breadcrumb.focusForeground': foreground,
-      'breadcrumb.background': activeBackground,
-      'breadcrumb.activeSelectionForeground': selectionBackgroundActive,
-      'breadcrumbPicker.background': background,
+      'breadcrumb.foreground': v('fgMuted'),
+      'breadcrumb.focusForeground': v('fg'),
+      'breadcrumb.background': v('bg'),
+      'breadcrumb.activeSelectionForeground': v('fgStrong'),
+      'breadcrumbPicker.background': v('bg'),
 
-      'editor.foreground': foreground,
-      'editor.background': background,
-      'editorWidget.background': background,
-      'editor.foldBackground': pick({ light: '#22222210', dark: '#eeeeee10' }),
-      'editor.lineHighlightBackground': activeBackground,
-      'editorLineNumber.foreground': v('ignored'),
-      'editorLineNumber.activeForeground': activeForeground,
-      'editorIndentGuide.background': pick({ light: '#00000015', dark: '#ffffff15' }),
-      'editorIndentGuide.activeBackground': pick({ light: '#00000030', dark: '#ffffff30' }),
-      'editorWhitespace.foreground': pick({ light: '#00000015', dark: '#ffffff15' }),
-      // 'editorCursor.foreground': primary,
+      'editor.foreground': v('fg'),
+      'editor.background': v('bg'),
+      'editorWidget.background': v('bg'),
+      'editor.foldBackground': v('bgFold'),
+      'editor.lineHighlightBackground': v('bgAlt'),
+      'editorLineNumber.foreground': v('fgMuted'),
+      'editorLineNumber.activeForeground': v('fgStrong'),
+      'editorIndentGuide.background': v('divider'),
+      'editorIndentGuide.activeBackground': v('fgMuted'),
+      'editorWhitespace.foreground': v('fgDim'),
+      'editorCursor.foreground': v('fg'),
 
-      'editor.findMatchBackground': pick({ light: '#e6cc7744', dark: '#e6cc7722' }),
-      'editor.findMatchHighlightBackground': pick({ light: '#e6cc7766', dark: '#e6cc7744' }),
-      'editor.inactiveSelectionBackground': selectionBackgroundInActive,
-      'editor.selectionBackground': selectionBackground,
-      'editor.selectionHighlightBackground': selectionBackgroundInActive,
-      'editor.wordHighlightBackground': pick({ light: '#1c6b4805', dark: '#1c6b4805' }),
-      'editor.wordHighlightStrongBackground': pick({ light: '#1c6b4810', dark: '#1c6b4810' }),
-      'editorBracketMatch.background': pick({ light: '#1c6b4820', dark: '#4d937520' }),
+      'editor.findMatchBackground': v('bgCurSearch'),
+      'editor.findMatchHighlightBackground': v('bgIncurSearch'),
+      'editor.inactiveSelectionBackground': v('bgSelection'),
+      'editor.selectionBackground': v('bgSelection'),
+      'editor.selectionHighlightBackground': v('bgSelection'),
+      'editor.wordHighlightBackground': v('bgSelection'),
+      'editor.wordHighlightStrongBackground': v('bgSelection'),
+      'editorBracketMatch.background': v('bg'),
 
-      'diffEditor.insertedTextBackground': pick({ light: '#1c6b4830', dark: '#4d937550' }),
-      'diffEditor.removedTextBackground': pick({ light: '#ab595940', dark: '#ab595950' }),
+      'diffEditor.insertedTextBackground': v('gitAdd', '22'),
+      'diffEditor.removedTextBackground': v('gitDelete', '22'),
 
-      'scrollbar.shadow': pick({ light: '#6a737d33', dark: '#0000' }),
-      'scrollbarSlider.background': v('faded'),
-      'scrollbarSlider.hoverBackground': v('ignored'),
-      'scrollbarSlider.activeBackground': v('ignored'),
-      'editorOverviewRuler.border': colors.white,
+      'scrollbar.shadow': v('shadow'),
+      'scrollbarSlider.background': v('bgAlt'),
+      'scrollbarSlider.hoverBackground': v('bgAlt'),
+      'scrollbarSlider.activeBackground': v('bgAlt'),
+      'editorOverviewRuler.border': v('borderMuted'),
 
-      'panel.background': background,
-      'panel.border': border,
-      'panelTitle.activeBorder': primary,
-      'panelTitle.activeForeground': foreground,
-      'panelTitle.inactiveForeground': colors.gray[5],
-      'panelInput.border': pick({ light: colors.gray[2], dark: colors.gray[1] }),
+      'panel.background': v('bg'),
+      'panel.border': v('borderMuted'),
+      'panelTitle.activeBorder': v('fgStrong'),
+      'panelTitle.activeForeground': v('fgStrong'),
+      'panelTitle.inactiveForeground': v('fgMuted'),
+      'panelInput.border': v('borderMuted'),
 
-      'terminal.foreground': foreground,
-      'terminal.selectionBackground': selectionBackground,
-      'terminal.ansiBrightBlack': pick({ light: '#aaaaaa', dark: '#777777' }),
-      'terminal.ansiBrightBlue': v('blue'),
-      'terminal.ansiBrightCyan': v('cyan'),
-      'terminal.ansiBrightGreen': v('green'),
-      'terminal.ansiBrightMagenta': v('magenta'),
-      'terminal.ansiBrightRed': v('red'),
-      'terminal.ansiBrightWhite': pick({ light: '#dddddd', dark: '#ffffff' }),
-      'terminal.ansiBrightYellow': v('yellow'),
-      'terminal.ansiBlack': pick({ light: VitesseThemes.background[0], dark: VitesseThemes.foreground[1] }),
-      'terminal.ansiBlue': v('blue'),
-      'terminal.ansiCyan': v('cyan'),
-      'terminal.ansiGreen': v('green'),
-      'terminal.ansiMagenta': v('magenta'),
-      'terminal.ansiRed': v('red'),
-      'terminal.ansiWhite': '#dbd7ca',
-      'terminal.ansiYellow': v('yellow'),
+      'terminal.foreground': v('fg'),
+      'terminal.selectionBackground': v('bgSelection'),
+      'terminal.ansiBrightBlack': v('bgAlt'),
+      'terminal.ansiBrightBlue': colors.azure[0],
+      'terminal.ansiBrightCyan': colors.cyan[0],
+      'terminal.ansiBrightGreen': colors.emerald[0],
+      'terminal.ansiBrightMagenta': colors.plum[0],
+      'terminal.ansiBrightRed': colors.rose[0],
+      'terminal.ansiBrightWhite': v('fgStrong'),
+      'terminal.ansiBrightYellow': colors.amber[0],
+      'terminal.ansiBlack': v('bg'),
+      'terminal.ansiBlue': colors.azure[1],
+      'terminal.ansiCyan': colors.cyan[1],
+      'terminal.ansiGreen': colors.emerald[1],
+      'terminal.ansiMagenta': colors.plum[1],
+      'terminal.ansiRed': colors.rose[1],
+      'terminal.ansiWhite': v('fgStrong'),
+      'terminal.ansiYellow': colors.amber[1],
 
-      'gitDecoration.addedResourceForeground': v('green'),
-      'gitDecoration.modifiedResourceForeground': v('blue'),
-      'gitDecoration.deletedResourceForeground': v('red'),
-      'gitDecoration.untrackedResourceForeground': v('cyan'),
-      'gitDecoration.ignoredResourceForeground': v('ignored'),
-      'gitDecoration.conflictingResourceForeground': v('orange'),
-      'gitDecoration.submoduleResourceForeground': v('secondaryForeground'),
+      'gitDecoration.addedResourceForeground': v('gitAdd'),
+      'gitDecoration.modifiedResourceForeground': v('gitChange'),
+      'gitDecoration.deletedResourceForeground': v('gitDelete'),
+      'gitDecoration.untrackedResourceForeground': v('gitIgnore'),
+      'gitDecoration.ignoredResourceForeground': v('gitIgnore'),
+      'gitDecoration.conflictingResourceForeground': v('diagWarn'),
+      'gitDecoration.submoduleResourceForeground': v('fg'),
 
-      'editorGutter.modifiedBackground': v('blue'),
-      'editorGutter.addedBackground': v('green'),
-      'editorGutter.deletedBackground': v('red'),
+      'editorGutter.modifiedBackground': v('gitChange'),
+      'editorGutter.addedBackground': v('gitAdd'),
+      'editorGutter.deletedBackground': v('gitDelete'),
 
-      'editorBracketHighlight.foreground1': v('cyan'),
-      'editorBracketHighlight.foreground2': v('green'),
-      'editorBracketHighlight.foreground3': v('orange'),
-      'editorBracketHighlight.foreground4': v('magenta'),
-      'editorBracketHighlight.foreground5': v('yellow'),
-      'editorBracketHighlight.foreground6': v('blue'),
+      'editorBracketHighlight.foreground1': colors.rose[1],
+      'editorBracketHighlight.foreground2': colors.coral[1],
+      'editorBracketHighlight.foreground3': colors.amber[1],
+      'editorBracketHighlight.foreground4': colors.moss[1],
+      'editorBracketHighlight.foreground5': colors.cyan[1],
+      'editorBracketHighlight.foreground6': colors.iris[1],
+      'editorBracketHighlight.foreground7': colors.plum[1],
 
-      'debugToolBar.background': background,
-      'editor.stackFrameHighlightBackground': pick({ light: colors.yellow[1], dark: '#a707' }),
-      'editor.focusedStackFrameHighlightBackground': pick({ light: colors.yellow[2], dark: '#b808' }),
+      'debugToolBar.background': v('bg'),
+      'editor.stackFrameHighlightBackground': v('bg'),
+      'editor.focusedStackFrameHighlightBackground': v('bg'),
 
-      'peekViewEditor.matchHighlightBackground': pick({ dark: '#ffd33d33', light: undefined }),
-      'peekViewResult.matchHighlightBackground': pick({ dark: '#ffd33d33', light: undefined }),
-      'peekViewEditor.background': background,
-      'peekViewResult.background': background,
+      'peekViewEditor.matchHighlightBackground': v('bgCurSearch'),
+      'peekViewResult.matchHighlightBackground': v('bgCurSearch'),
+      'peekViewEditor.background': v('bg'),
+      'peekViewResult.background': v('bg'),
 
-      'settings.headerForeground': foreground,
-      'settings.modifiedItemIndicator': primary,
-      'welcomePage.buttonBackground': colors.gray[1],
-      'welcomePage.buttonHoverBackground': colors.gray[2],
+      'settings.headerForeground': v('fg'),
+      'settings.modifiedItemIndicator': v('accent1'),
+      'welcomePage.buttonBackground': v('fgMuted'),
+      'welcomePage.buttonHoverBackground': v('fg'),
 
-      'problemsErrorIcon.foreground': v('red'),
-      'problemsWarningIcon.foreground': v('orange'),
-      'problemsInfoIcon.foreground': v('blue'),
+      'problemsErrorIcon.foreground': v('diagError'),
+      'problemsWarningIcon.foreground': v('diagWarn'),
+      'problemsInfoIcon.foreground': v('diagInfo'),
 
-      'editorError.foreground': v('red'),
-      'editorWarning.foreground': v('orange'),
-      'editorInfo.foreground': v('blue'),
-      'editorHint.foreground': v('green'),
+      'editorError.foreground': v('diagError'),
+      'editorWarning.foreground': v('diagWarn'),
+      'editorInfo.foreground': v('diagInfo'),
+      'editorHint.foreground': v('diagHint'),
 
-      'editorGutter.commentRangeForeground': v('ignored'),
-      'editorGutter.foldingControlForeground': v('secondaryForeground'),
+      'editorGutter.commentRangeForeground': v('fgMuted'),
+      'editorGutter.foldingControlForeground': v('fgMuted'),
 
-      'editorInlayHint.foreground': punctuation,
-      'editorInlayHint.background': activeBackground,
+      'editorInlayHint.foreground': v('fgMuted'),
+      'editorInlayHint.background': v('bg'),
 
-      'editorStickyScroll.background': activeBackground,
-      'editorStickyScrollHover.background': activeBackground,
+      'editorStickyScroll.background': v('bg'),
+      'editorStickyScrollHover.background': v('bgAlt'),
 
-      'menu.separatorBackground': border,
+      'menu.separatorBackground': v('divider'),
     },
     semanticHighlighting: true,
     semanticTokenColors: {
-      namespace: v('namespace'),
+      namespace: v('include'),
+      class: v('type'),
+      enum: v('type'),
+      interface: v('type'),
+      struct: v('type'),
+      typeParameter: v('define'),
+      type: v('type'),
+      parameter: v('parameter'),
+      variable: v('variable'),
       property: v('property'),
-      interface: v('interface'),
-      type: v('interface'),
-      class: v('class'),
+      enumMember: v('constant'),
+      decorator: v('preProc'),
+      event: v('func'),
+      function: v('func'),
+      method: v('method'),
+      macro: v('macro'),
+      label: v('label'),
+      comment: v('comment'),
+      string: v('string'),
+      keyword: v('keyword'),
+      number: v('number'),
+      regexp: v('specialChar'),
+      operator: v('operator'),
+      declaration: v('define'),
+      definition: v('define'),
+      readonly: v('constant'),
+      static: v('constant'),
+      deprecated: v('comment'),
+      abstract: v('type'),
+      async: v('keyword'),
+      modification: v('variable'),
+      documentation: v('comment'),
+      defaultLibrary: v('type'),
     },
     tokenColors: [
       {
@@ -296,7 +314,7 @@ export default function getTheme(options: GetThemeOptions) {
           'punctuation.definition.string.end.html.vue',
         ],
         settings: {
-          foreground: punctuation,
+          foreground: v('delimiter'),
         },
       },
       {
@@ -313,13 +331,13 @@ export default function getTheme(options: GetThemeOptions) {
       {
         scope: ['entity', 'entity.name'],
         settings: {
-          foreground: v('function'),
+          foreground: v('variable'),
         },
       },
       {
         scope: 'variable.parameter.function',
         settings: {
-          foreground,
+          foreground: v('func'),
         },
       },
       {
@@ -328,13 +346,13 @@ export default function getTheme(options: GetThemeOptions) {
           'tag.html',
         ],
         settings: {
-          foreground: v('keyword'),
+          foreground: v('tag'),
         },
       },
       {
         scope: 'entity.name.function',
         settings: {
-          foreground: v('function'),
+          foreground: v('func'),
         },
       },
       {
@@ -357,7 +375,7 @@ export default function getTheme(options: GetThemeOptions) {
           'constant.language.import-export-all.ts',
         ],
         settings: {
-          foreground: v('builtin'),
+          foreground: v('storageClass'),
         },
       },
       {
@@ -368,7 +386,7 @@ export default function getTheme(options: GetThemeOptions) {
           'storage.type.java',
         ],
         settings: {
-          foreground,
+          foreground: v('fg'),
         },
       },
       {
@@ -386,7 +404,7 @@ export default function getTheme(options: GetThemeOptions) {
           'punctuation.definition.string',
         ],
         settings: {
-          foreground: v('string', '77'),
+          foreground: v('string'),
         },
       },
       {
@@ -394,7 +412,7 @@ export default function getTheme(options: GetThemeOptions) {
           'punctuation.support.type.property-name',
         ],
         settings: {
-          foreground: v('property', '77'),
+          foreground: v('property'),
         },
       },
       {
@@ -445,7 +463,7 @@ export default function getTheme(options: GetThemeOptions) {
       {
         scope: 'namespace',
         settings: {
-          foreground: v('namespace'),
+          foreground: v('include'),
         },
       },
       {
@@ -462,43 +480,43 @@ export default function getTheme(options: GetThemeOptions) {
         scope: 'invalid.broken',
         settings: {
           fontStyle: 'italic',
-          foreground: colors.red[7],
+          foreground: v('diagError'),
         },
       },
       {
         scope: 'invalid.deprecated',
         settings: {
           fontStyle: 'italic',
-          foreground: colors.red[7],
+          foreground: v('diagError'),
         },
       },
       {
         scope: 'invalid.illegal',
         settings: {
           fontStyle: 'italic',
-          foreground: colors.red[7],
+          foreground: v('diagError'),
         },
       },
       {
         scope: 'invalid.unimplemented',
         settings: {
           fontStyle: 'italic',
-          foreground: colors.red[7],
+          foreground: v('diagError'),
         },
       },
       {
         scope: 'carriage-return',
         settings: {
           fontStyle: 'italic underline',
-          background: pick({ light: colors.red[5], dark: colors.red[6] }),
-          foreground: colors.gray[0],
+          background: v('diagError', '22'),
+          foreground: v('fg'),
           content: '^M',
         },
       },
       {
         scope: 'message.error',
         settings: {
-          foreground: colors.red[7],
+          foreground: v('msgFailure'),
         },
       },
       {
@@ -513,7 +531,7 @@ export default function getTheme(options: GetThemeOptions) {
           'string.regexp',
         ],
         settings: {
-          foreground: v('regex'),
+          foreground: v('specialChar'),
         },
       },
       {
@@ -530,7 +548,7 @@ export default function getTheme(options: GetThemeOptions) {
       {
         scope: 'string.regexp constant.character.escape',
         settings: {
-          foreground: v('yellow'),
+          foreground: v('specialChar'),
         },
       },
       {
@@ -556,7 +574,7 @@ export default function getTheme(options: GetThemeOptions) {
           'keyword.other.unit',
         ],
         settings: {
-          foreground: v('builtin'),
+          foreground: v('keyword'),
         },
       },
       {
@@ -571,46 +589,46 @@ export default function getTheme(options: GetThemeOptions) {
       {
         scope: 'meta.module-reference',
         settings: {
-          foreground: primary,
+          foreground: v('type'),
         },
       },
       {
         scope: 'punctuation.definition.list.begin.markdown',
         settings: {
-          foreground: v('orange'),
+          foreground: v('delimiter'),
         },
       },
       {
         scope: ['markup.heading', 'markup.heading entity.name'],
         settings: {
           fontStyle: 'bold',
-          foreground: primary,
+          foreground: v('fgStrong'),
         },
       },
       {
         scope: 'markup.quote',
         settings: {
-          foreground: v('interface'),
+          foreground: v('type'),
         },
       },
       {
         scope: 'markup.italic',
         settings: {
           fontStyle: 'italic',
-          foreground,
+          foreground: v('fg'),
         },
       },
       {
         scope: 'markup.bold',
         settings: {
           fontStyle: 'bold',
-          foreground,
+          foreground: v('fg'),
         },
       },
       {
         scope: 'markup.raw',
         settings: {
-          foreground: primary,
+          foreground: v('string'),
         },
       },
       {
@@ -620,8 +638,8 @@ export default function getTheme(options: GetThemeOptions) {
           'punctuation.definition.deleted',
         ],
         settings: {
-          background: colors.red[0],
-          foreground: colors.red[7],
+          background: v('gitDelete', '22'),
+          foreground: v('gitDelete'),
         },
       },
       {
@@ -631,48 +649,48 @@ export default function getTheme(options: GetThemeOptions) {
           'punctuation.definition.inserted',
         ],
         settings: {
-          background: colors.green[0],
-          foreground: colors.green[6],
+          background: v('gitAdd', '22'),
+          foreground: v('gitAdd'),
         },
       },
       {
         scope: ['markup.changed', 'punctuation.definition.changed'],
         settings: {
-          background: colors.orange[1],
-          foreground: colors.orange[6],
+          background: v('gitChange', '22'),
+          foreground: v('gitChange'),
         },
       },
       {
         scope: ['markup.ignored', 'markup.untracked'],
         settings: {
-          foreground: colors.gray[1],
-          background: colors.blue[6],
+          foreground: v('gitIgnore'),
+          background: v('gitIgnore', '22'),
         },
       },
       {
         scope: 'meta.diff.range',
         settings: {
-          foreground: pick({ light: colors.purple[5], dark: colors.purple[6] }),
+          foreground: v('gitChange'),
           fontStyle: 'bold',
         },
       },
       {
         scope: 'meta.diff.header',
         settings: {
-          foreground: colors.blue[6],
+          foreground: v('fgStrong'),
         },
       },
       {
         scope: 'meta.separator',
         settings: {
           fontStyle: 'bold',
-          foreground: colors.blue[6],
+          foreground: v('fgStrong'),
         },
       },
       {
         scope: 'meta.output',
         settings: {
-          foreground: colors.blue[6],
+          foreground: v('fgStrong'),
         },
       },
       {
@@ -685,13 +703,13 @@ export default function getTheme(options: GetThemeOptions) {
           'brackethighlighter.quote',
         ],
         settings: {
-          foreground: colors.gray[6],
+          foreground: v('delimiter'),
         },
       },
       {
         scope: 'brackethighlighter.unmatched',
         settings: {
-          foreground: colors.red[7],
+          foreground: v('diagError'),
         },
       },
       {
@@ -702,7 +720,7 @@ export default function getTheme(options: GetThemeOptions) {
           'punctuation.definition.string.end.markdown',
         ],
         settings: {
-          foreground: v('string'),
+          foreground: v('fg'),
         },
       },
       {
@@ -711,7 +729,7 @@ export default function getTheme(options: GetThemeOptions) {
           'markup.underline.link.image.markdown',
         ],
         settings: {
-          foreground: secondaryForeground,
+          foreground: v('fgMuted'),
           fontStyle: 'underline',
         },
       },
@@ -721,7 +739,7 @@ export default function getTheme(options: GetThemeOptions) {
           'constant.other.character-class.regexp',
         ],
         settings: {
-          foreground: v('class'),
+          foreground: v('specialChar'),
         },
       },
       {
@@ -729,7 +747,7 @@ export default function getTheme(options: GetThemeOptions) {
           'entity.other.attribute-name.html.vue',
         ],
         settings: {
-          foreground: v('function'),
+          foreground: v('func'),
         },
       },
       {
