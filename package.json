@@ -3,7 +3,7 @@
   "name": "theme-oq",
   "displayName": "oQ Theme",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "packageManager": "pnpm@10.15.0",
   "description": "oQ theme for VS Code",
   "license": "MIT",
