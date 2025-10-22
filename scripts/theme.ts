@@ -101,7 +101,7 @@ export default function getTheme(options: GetThemeOptions) {
       'pickerGroup.foreground': v('fg'),
       'quickInput.background': v('bg'),
       'quickInput.foreground': v('fg'),
-      'quickInputList.focusBackground': v('bg'),
+      'quickInputList.focusBackground': v('bgAlt'),
 
       'statusBar.foreground': v('fg'),
       'statusBar.background': v('bgStatusLine'),
