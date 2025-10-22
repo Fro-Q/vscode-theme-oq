@@ -245,6 +245,7 @@ export default function getTheme(options: GetThemeOptions) {
     },
     semanticHighlighting: true,
     semanticTokenColors: {
+      component: v('define'),
       namespace: v('include'),
       class: v('type'),
       enum: v('type'),
@@ -439,7 +440,7 @@ export default function getTheme(options: GetThemeOptions) {
           'invalid.deprecated.entity.other.attribute-name.html',
         ],
         settings: {
-          foreground: v('variable'),
+          foreground: v('delimiter'),
         },
       },
       {

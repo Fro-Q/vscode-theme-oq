@@ -4,15 +4,6 @@
 <a href="https://marketplace.visualstudio.com/items?itemName=froQ.theme-oq" target="__blank"></a>
 </p>
 
-<p align="center">
-<img width="1275" alt="Screenshot Light Mode" src="https://github.com/user-attachments/assets/7fa3db7a-5b11-4622-a59b-1f7b3f837d0d">
-<img width="1275" alt="Screenshot Dark Mode" src="https://github.com/user-attachments/assets/2919bb08-596b-4279-9f1e-4d2f7d1913fb">
-<sub><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Font | <a href="https://input.djr.com/">Input Mono</a><br>
-&nbsp;File Icons | <a href="https://marketplace.visualstudio.com/items?itemName=Catppuccin.catppuccin-vsc-icons">Catppuccin</a><br>
-Product Icons | <a href="https://github.com/antfu/vscode-icons-carbon">Carbon</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Demo | <a href="https://github.com/antfu/vitesse">Vitesse</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</samp></sub>
-</p>
-
 ## Match with System
 
 <!--eslint-skip-->
@@ -21,22 +12,23 @@ Product Icons | <a href="https://github.com/antfu/vscode-icons-carbon">Carbon</a
 // .vscode/setting.json
 {
   "window.autoDetectColorScheme": true,
-  "workbench.preferredLightColorTheme": "Vitesse Light",
-  "workbench.preferredDarkColorTheme": "Vitesse Dark",
+  "workbench.preferredLightColorTheme": "oQ Light",
+  "workbench.preferredDarkColorTheme": "oQ Dark",
 }
 ```
 
 ## Links
 
-[prism-theme-vars](https://github.com/antfu/prism-theme-vars) - where the theme is born.
-
-[vitesse](https://github.com/antfu/vitesse) - what the theme was for.
+- [Vitesse Theme](https://marketplace.visualstudio.com/items?itemName=antfu.theme-vitesse). Great theme, probably my favorite.
+- [@antfu](https://github.com/antfu), author of Vitesse Theme and many other great [projects](https://antfu.me/projects).
 
 ## Thanks
 
-This project is based on [github-vscode-theme](https://github.com/primer/github-vscode-theme).
+This project is based on [Vitesse Theme](https://marketplace.visualstudio.com/items?itemName=antfu.theme-vitesse) by [Anthony Fu](https://github.com/antfu).
 
 ## License
 
 MIT - Copyright (c) 2020 Primer <br>
 MIT - Copyright (c) 2021 Anthony Fu
+<br>
+MIT - Copyright (c) 2025 froQ
