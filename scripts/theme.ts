@@ -35,7 +35,6 @@ export default function getTheme(options: GetThemeOptions) {
       'button.hoverBackground': v('bgReversed'),
 
       'checkbox.background': v('bg'),
-      // 'checkbox.border': pick({ light: colors.gray[3], dark: colors.gray[1] }),
       'checkbox.border': v('borderMuted'),
 
       'dropdown.background': v('bg'),
@@ -80,7 +79,7 @@ export default function getTheme(options: GetThemeOptions) {
       'list.inactiveSelectionForeground': v('fgMuted'),
       'list.activeSelectionForeground': v('fgStrong'),
       'list.hoverBackground': v('bgSelection'),
-      'list.inactiveSelectionBackground': v('bg'),
+      'list.inactiveSelectionBackground': v('bgAlt'),
       'list.activeSelectionBackground': v('bgAlt'),
       'list.inactiveFocusBackground': v('bg'),
       'list.focusBackground': v('bgAlt'),
@@ -150,8 +149,8 @@ export default function getTheme(options: GetThemeOptions) {
       'editor.inactiveSelectionBackground': v('bgSelection'),
       'editor.selectionBackground': v('bgSelection'),
       'editor.selectionHighlightBackground': v('bgSelection'),
-      'editor.wordHighlightBackground': v('bgSelection'),
-      'editor.wordHighlightStrongBackground': v('bgSelection'),
+      'editor.wordHighlightBackground': v('accent1', '20'),
+      'editor.wordHighlightStrongBackground': v('accent1', '30'),
       'editorBracketMatch.background': v('bg'),
 
       'diffEditor.insertedTextBackground': v('gitAdd', '22'),

@@ -1,6 +1,8 @@
 <h1 align="center">oQ Theme for VS Code</h1>
 
 <p align="center">
+<img src="assets/oq_dark.png" alt="oQ Theme Preview" width="600"/>
+<img src="assets/oq_light.png" alt="oQ Theme Preview" width="600"/>
 <a href="https://marketplace.visualstudio.com/items?itemName=froQ.theme-oq" target="__blank"></a>
 </p>
 
